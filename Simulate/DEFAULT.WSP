@@ -1,0 +1,14 @@
+Project=
+ProcessorType=1
+DefaultFindDir=C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate
+SectorSize=64
+EnablePagedMemory=0
+EnablePaged8bitAddressing=0
+PagedMemoryControlAddress=0
+NumberOfMemoryPages=1
+ProcessorVariant=0
+LoaderType=0
+EnableAutoUpdate=0
+UpdateCount=10000
+Window=8051,keyboard_reading,C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51,1,-8,403,1086
+Window=Output,Output1,,111,100,513,1194

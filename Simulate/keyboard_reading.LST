@@ -1,0 +1,1182 @@
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 1
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+    1 0000              ;; here we have 10-17h and 25h
+    2 0000              
+    3 0000              
+    4 0000 020008       jmp Start
+    5 0003              org 03h
+    6 0003 C2AF         	clr EA
+    7 0005 C214         	clr 14h
+    8 0007 32           	reti
+    9 0008              
+   10 0008              
+   11 0008              
+   12 0008              
+   13 0008              
+   14 0008              Start:
+   15 0008 D2A8         	 setb EX0
+   16 000A D288         	 setb IT0
+   17 000C 758130       	mov SP,#30h
+   18 000F 90E003       	MOV DPTR,#0E003H ;PROGRAMMING CWR [CONTROL WORD REGISTER]. PORT_C[4..7]: OUTPUT, PORT_C[0..3]: INPUT. PORT_A: OUTPUT, PORT_B: OUTPUT.
+   19 0012 7481         	MOV A,#10000001B
+   20 0014 F0           	MOVX @DPTR,A
+   21 0015 90C003       	MOV DPTR,#0C003H ;PROGRAMMING CWR [OF THE UPPER PPI]. PORT_A: OUTPUT, PORT_B: OUTPUT, PORT_C: OUTPUT
+   22 0018 7480         	MOV A,#10000000B
+   23 001A F0           	MOVX @DPTR,A
+   24 001B 91E7         	acall getByte
+   25 001D F523         	mov 23h,A
+   26 001F 91E7         	acall getByte
+   27 0021 F524         	mov 24h,A
+   28 0023 91E7         	acall getByte
+   29 0025 F510         	mov 10h,A			;END_H
+   30 0027 91E7         	acall getByte
+   31 0029 F511         	mov 11h,A			;END_L
+   32 002B 852312       	mov 12h,23h
+   33 002E 852413       	mov 13h,24h
+   34 0031              Loop:
+   35 0031 E512         	mov A,12h
+   36 0033 B51008       	cjne A,10h,ST_1
+   37 0036 E513         	mov A,13h
+   38 0038 B51103       	cjne A,11h,ST_1
+   39 003B 020056       	jmp ST_2
+   40 003E              ST_1:
+   41 003E 91E7         	acall getByte
+   42 0040 851283       	mov DPH,12h
+   43 0043 851382       	mov DPL,13h
+   44 0046 F0           	movx @DPTR,A
+   45 0047 E513         	mov A,13h
+   46 0049 2401         	add A,#1
+   47 004B F513         	mov 13h,A
+   48 004D E512         	mov A,12h
+   49 004F 3400         	addc A,#0
+   50 0051 F512         	mov 12h,A
+   51 0053 020031       	jmp Loop
+   52 0056              
+   53 0056              ST_2:
+   54 0056              	startEx:
+   55 0056              	;;mov 23h,#1
+   56 0056              	;;mov 24h,#0
+   57 0056              	;setting the PC
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 2
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+   58 0056 85231A       	Mov 1Ah,23h
+   59 0059 85241B       	Mov 1Bh,24h
+   60 005C              	;Mov 1Ch,#01h
+   61 005C              	;Mov 1Dh,#00h
+   62 005C 85241D       	mov 1Dh,24h
+   63 005F 7402         	mov A,#2
+   64 0061 2524         	add A,24h
+   65 0063 F51C         	mov 1Ch,A
+   66 0065              
+   67 0065              Main:
+   68 0065 C2AF         	clr EA
+   69 0067 E510         	mov A,10h
+   70 0069 B51A08       	cjne A,1Ah,MyC
+   71 006C E511         	mov A,11h
+   72 006E B51B03       	cjne A,1Bh,MyC
+   73 0071 020625       	jmp EE
+   74 0074              MyC:
+   75 0074              	
+   76 0074 301103       	jnb 11h,Main_C1
+   77 0077 020355       	jmp isINT
+   78 007A              Main_C1:
+   79 007A 851A83       	Mov DPH,1Ah
+   80 007D 851B82       	Mov DPL,1Bh
+   81 0080 E0           	Movx A,@DPTR
+   82 0081              	;;;mov A,#1   this was for debugging
+   83 0081 C3           	clr c
+   84 0082 33           	rlc A
+   85 0083 F518         	mov 18h,A
+   86 0085 9005E1       	mov DPTR,#TABLE
+   87 0088 93           	Movc A,@A+DPTR
+   88 0089 F5F0         	mov B,A
+   89 008B E518         	mov A,18h
+   90 008D 04           	inc A
+   91 008E 93           	movc A,@A+DPTR
+   92 008F F582         	mov DPL,A
+   93 0091 85F083       	mov DPH,B
+   94 0094 7400         	mov A,#0
+   95 0096 73           	jmp @A+DPTR
+   96 0097              	
+   97 0097              	
+   98 0097              	
+   99 0097              	
+  100 0097              	
+  101 0097              	
+  102 0097              	
+  103 0097              	
+  104 0097              	
+  105 0097              CNT:
+  106 0097 301303       	jnb 13h,CNT_C3
+  107 009A 020065       	jmp Main
+  108 009D              	
+  109 009D              CNT_C3:	
+  110 009D 752600       	 mov 26h,#0
+  111 00A0 752700       	 mov 27h,#0
+  112 00A3 851A28       	 mov 28h,1ah
+  113 00A6 851B29       	 mov 29h,1bh
+  114 00A9 B1B9         	 acall show
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 3
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  115 00AB B1A9         	 acall LDe
+  116 00AD B1D2         	 acall rSHOW
+  117 00AF B118         	acall getFour
+  118 00B1 20E30B       	jb ACC.3,CNT_C1
+  119 00B4 20E203       	jb ACC.2,CNT_C2
+  120 00B7 020065       	jmp Main
+  121 00BA              CNT_C2:
+  122 00BA D213         	setb 13h
+  123 00BC 020065       	jmp Main
+  124 00BF              CNT_C1:
+  125 00BF 20E22E       	jb ACC.2,CNT_C4
+  126 00C2 75260A       	mov 26h,#0Ah
+  127 00C5 75270A       	 mov 27h,#0Ah
+  128 00C8 75280A       	 mov 28h,#0Ah
+  129 00CB 75290A       	 mov 29h,#0Ah
+  130 00CE B1B9         	 acall SHOW
+  131 00D0 B1A9         	 acall LDe
+  132 00D2 B1D2         	 acall rSHOW
+  133 00D4 91E7         	acall getByte
+  134 00D6 752600       	mov 26h,#0
+  135 00D9 752700       	mov 27h,#0
+  136 00DC 752800       	mov 28h,#0
+  137 00DF D2D4         	setb RS1
+  138 00E1 D2D3         	setb RS0
+  139 00E3 F8           	mov R0,A
+  140 00E4 E6           	mov A,@R0
+  141 00E5 F529         	mov 29h,A
+  142 00E7 B1B9         	acall SHOW
+  143 00E9 B1A9         	acall LDe
+  144 00EB B1D2         	acall rSHOW
+  145 00ED 020097       	jmp CNT
+  146 00F0              CNT_C4:
+  147 00F0              
+  148 00F0 75260B       	 mov 26h,#0Bh
+  149 00F3 75270B       	 mov 27h,#0Bh
+  150 00F6 75280B       	 mov 28h,#0Bh
+  151 00F9 75290B       	 mov 29h,#0bh
+  152 00FC B1B9         	 acall SHOW
+  153 00FE B1A9         	 acall LDe
+  154 0100 B1D2         	 acall rSHOW
+  155 0102              
+  156 0102 91E7         	acall getByte
+  157 0104 D2D4         	setb RS1
+  158 0106 D2D3         	setb RS0
+  159 0108 F8           	mov R0,A
+  160 0109              	
+  161 0109 75260C       	mov 26h,#0Ch
+  162 010C 75270C       	 mov 27h,#0Ch
+  163 010F 75280C       	 mov 28h,#0Ch
+  164 0112 75290C       	 mov 29h,#0Ch
+  165 0115 B1B9         	 acall SHOW
+  166 0117 B1A9         	 acall LDe
+  167 0119 B1D2         	 acall rSHOW
+  168 011B              	
+  169 011B              	
+  170 011B 91E7         	acall getByte
+  171 011D F9           	mov R1,A
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 4
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  172 011E 8883         	mov DPH,R0
+  173 0120 8982         	mov DPL,R1
+  174 0122 E0           	movx A,@DPTR
+  175 0123 752600       	mov 26h,#0
+  176 0126 752700       	mov 27h,#0
+  177 0129 752800       	mov 28h,#0
+  178 012C F529         	mov 29h,A
+  179 012E B1B9         	acall SHOW
+  180 0130 B1A9         	acall LDe
+  181 0132 B1D2         	acall rSHOW
+  182 0134 020097       	jmp CNT
+  183 0137              
+  184 0137              
+  185 0137 020065       	jmp Main
+  186 013A              	
+  187 013A              	
+  188 013A              	
+  189 013A              	
+  190 013A              	;The system has 16 registers which will be the first two banks plus addressable bits 00h to 0Fh
+  191 013A              	; The memory is yet to be desided
+  192 013A              	;In this system A= our 00h
+  193 013A              	;00h -> carry_bit
+  194 013A              	
+  195 013A              isAND:			;This is going to be a two byte code(The second byte is betwenn 0-15)
+  196 013A 851A83       	Mov DPH,1Ah
+  197 013D 851B82       	Mov DPL,1Bh
+  198 0140 A3           	inc DPTR
+  199 0141 E0           	movx A, @DPTR
+  200 0142 D2D4         	setb RS1
+  201 0144 D2D3         	setb RS0
+  202 0146 F8           	mov R0,A
+  203 0147 E500         	mov A,00h
+  204 0149 56           	ANL A,@R0
+  205 014A F500         	mov 00h,A
+  206 014C 91DA         	acall addPC
+  207 014E 91DA         	acall addPC
+  208 0150 020097       	jmp CNT
+  209 0153              	
+  210 0153              	
+  211 0153              isANDI:			;This is going to be a two byte code(The second byte is betwenn 0-15)
+  212 0153 851A83       	Mov DPH,1Ah
+  213 0156 851B82       	Mov DPL,1Bh
+  214 0159 A3           	inc DPTR
+  215 015A E0           	movx A, @DPTR
+  216 015B D2D4         	setb RS1
+  217 015D D2D3         	setb RS0
+  218 015F F8           	mov R0,A
+  219 0160 E500         	mov A,00h
+  220 0162 58           	ANL A,R0
+  221 0163 F500         	mov 00h,A
+  222 0165 91DA         	acall addPC
+  223 0167 91DA         	acall addPC
+  224 0169 020097       	jmp CNT
+  225 016C              	
+  226 016C              isOR:
+  227 016C 851A83       	Mov DPH,1Ah
+  228 016F 851B82       	Mov DPL,1Bh
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 5
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  229 0172 A3           	inc DPTR
+  230 0173 E0           	movx A, @DPTR
+  231 0174 D2D4         	setb RS1
+  232 0176 D2D3         	setb RS0
+  233 0178 F8           	mov R0,A
+  234 0179 E500         	mov A,00h
+  235 017B 46           	ORL A,@R0
+  236 017C F500         	mov 00h,A
+  237 017E 91DA         	acall addPC
+  238 0180 91DA         	acall addPC
+  239 0182 020097       	jmp CNT
+  240 0185              	
+  241 0185              isORI:
+  242 0185 851A83       	Mov DPH,1Ah
+  243 0188 851B82       	Mov DPL,1Bh
+  244 018B A3           	inc DPTR
+  245 018C E0           	movx A, @DPTR
+  246 018D D2D4         	setb RS1
+  247 018F D2D3         	setb RS0
+  248 0191 F8           	mov R0,A
+  249 0192 E500         	mov A,00h
+  250 0194 48           	ORL A,R0
+  251 0195 F500         	mov 00h,A
+  252 0197 91DA         	acall addPC
+  253 0199 91DA         	acall addPC	
+  254 019B 020097       	jmp CNT
+  255 019E              
+  256 019E              	
+  257 019E              isNOT:
+  258 019E 851A83       	Mov DPH,1Ah
+  259 01A1 851B82       	Mov DPL,1Bh
+  260 01A4 A3           	inc DPTR
+  261 01A5 E0           	movx A, @DPTR
+  262 01A6 D2D4         	setb RS1
+  263 01A8 D2D3         	setb RS0
+  264 01AA F8           	mov R0,A
+  265 01AB E6           	mov A,@R0
+  266 01AC F4           	CPL A
+  267 01AD F6           	mov @R0,A
+  268 01AE 91DA         	acall addPC
+  269 01B0 91DA         	acall addPC
+  270 01B2 020097       	jmp CNT
+  271 01B5              
+  272 01B5              isRL:
+  273 01B5 851A83       	Mov DPH,1Ah
+  274 01B8 851B82       	Mov DPL,1Bh
+  275 01BB A3           	inc DPTR
+  276 01BC E0           	movx A, @DPTR
+  277 01BD D2D4         	setb RS1
+  278 01BF D2D3         	setb RS0
+  279 01C1 F8           	mov R0,A
+  280 01C2 E6           	mov A,@R0
+  281 01C3 23           	RL A
+  282 01C4 F6           	mov @R0,A
+  283 01C5 91DA         	acall addPC
+  284 01C7 91DA         	acall addPC
+  285 01C9 020097       	jmp CNT
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 6
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  286 01CC              
+  287 01CC              
+  288 01CC              isRLC:
+  289 01CC 851A83       	Mov DPH,1Ah
+  290 01CF 851B82       	Mov DPL,1Bh
+  291 01D2 A3           	inc DPTR
+  292 01D3 E0           	movx A, @DPTR
+  293 01D4 D2D4         	setb RS1
+  294 01D6 D2D3         	setb RS0
+  295 01D8 F8           	mov R0,A
+  296 01D9 E6           	mov A,@R0
+  297 01DA A200         	mov c,00h
+  298 01DC 33           	RLC A
+  299 01DD 9200         	mov 00h,c
+  300 01DF F6           	mov @R0,A
+  301 01E0 91DA         	acall addPC
+  302 01E2 91DA         	acall addPC
+  303 01E4 020097       	jmp CNT
+  304 01E7              	
+  305 01E7              isRR:
+  306 01E7 851A83       	Mov DPH,1Ah
+  307 01EA 851B82       	Mov DPL,1Bh
+  308 01ED A3           	inc DPTR
+  309 01EE E0           	movx A, @DPTR
+  310 01EF D2D4         	setb RS1
+  311 01F1 D2D3         	setb RS0
+  312 01F3 F8           	mov R0,A
+  313 01F4 E6           	mov A,@R0
+  314 01F5 03           	RR A
+  315 01F6 F6           	mov @R0,A
+  316 01F7 91DA         	acall addPC
+  317 01F9 91DA         	acall addPC
+  318 01FB 020097       	jmp CNT
+  319 01FE              
+  320 01FE              
+  321 01FE              isRRC:
+  322 01FE 851A83       	Mov DPH,1Ah
+  323 0201 851B82       	Mov DPL,1Bh
+  324 0204 A3           	inc DPTR
+  325 0205 E0           	movx A, @DPTR
+  326 0206 D2D4         	setb RS1
+  327 0208 D2D3         	setb RS0
+  328 020A F8           	mov R0,A
+  329 020B E6           	mov A,@R0
+  330 020C A200         	mov c,00h
+  331 020E 13           	RRC A
+  332 020F 9200         	mov 00h,c
+  333 0211 F6           	mov @R0,A
+  334 0212 91DA         	acall addPC
+  335 0214 91DA         	acall addPC
+  336 0216 020097       	jmp CNT
+  337 0219              isADD:
+  338 0219 851A83       	Mov DPH,1Ah
+  339 021C 851B82       	Mov DPL,1Bh
+  340 021F A3           	inc DPTR
+  341 0220 E0           	movx A, @DPTR
+  342 0221 D2D4         	setb RS1
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 7
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  343 0223 D2D3         	setb RS0
+  344 0225 F8           	mov R0,A
+  345 0226 E500         	mov A,00h
+  346 0228 C3           	clr c
+  347 0229 26           	ADD A,@R0
+  348 022A 9200         	mov 00h,c
+  349 022C F500         	mov 00h,A
+  350 022E 91DA         	acall addPC
+  351 0230 91DA         	acall addPC
+  352 0232 020097       	jmp CNT
+  353 0235              	
+  354 0235              isADDI:	
+  355 0235 851A83       	Mov DPH,1Ah
+  356 0238 851B82       	Mov DPL,1Bh
+  357 023B A3           	inc DPTR
+  358 023C E0           	movx A, @DPTR
+  359 023D D2D4         	setb RS1
+  360 023F D2D3         	setb RS0
+  361 0241 F8           	mov R0,A
+  362 0242 E500         	mov A,00h
+  363 0244 C3           	clr c
+  364 0245 28           	ADD A,R0
+  365 0246 9200         	mov 00h,c
+  366 0248 F500         	mov 00h,A
+  367 024A 91DA         	acall addPC
+  368 024C 91DA         	acall addPC
+  369 024E 020097       	jmp CNT
+  370 0251              
+  371 0251              isADDC:
+  372 0251 851A83       	Mov DPH,1Ah
+  373 0254 851B82       	Mov DPL,1Bh
+  374 0257 A3           	inc DPTR
+  375 0258 E0           	movx A, @DPTR
+  376 0259 D2D4         	setb RS1
+  377 025B D2D3         	setb RS0
+  378 025D F8           	mov R0,A
+  379 025E E500         	mov A,00h
+  380 0260 A200         	mov c,00h
+  381 0262 36           	ADDC A,@R0
+  382 0263 9200         	mov 00h,c
+  383 0265 F500         	mov 00h,A
+  384 0267 91DA         	acall addPC
+  385 0269 91DA         	acall addPC
+  386 026B 020097       	jmp CNT
+  387 026E              
+  388 026E              
+  389 026E              isADDCI:
+  390 026E 851A83       	Mov DPH,1Ah
+  391 0271 851B82       	Mov DPL,1Bh
+  392 0274 A3           	inc DPTR
+  393 0275 E0           	movx A, @DPTR
+  394 0276 D2D4         	setb RS1
+  395 0278 D2D3         	setb RS0
+  396 027A F8           	mov R0,A
+  397 027B E500         	mov A,00h
+  398 027D A200         	mov c,00h
+  399 027F 38           	ADDC A,R0
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 8
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  400 0280 9200         	mov 00h,c
+  401 0282 F500         	mov 00h,A
+  402 0284 91DA         	acall addPC
+  403 0286 91DA         	acall addPC
+  404 0288 020097       	jmp CNT
+  405 028B              
+  406 028B              
+  407 028B              
+  408 028B              isSUBB:
+  409 028B 851A83       	Mov DPH,1Ah
+  410 028E 851B82       	Mov DPL,1Bh
+  411 0291 A3           	inc DPTR
+  412 0292 E0           	movx A, @DPTR
+  413 0293 D2D4         	setb RS1
+  414 0295 D2D3         	setb RS0
+  415 0297 F8           	mov R0,A
+  416 0298 E500         	mov A,00h
+  417 029A A200         	mov c,00h
+  418 029C 96           	subb A,@R0
+  419 029D 9200         	mov 00h,c
+  420 029F F500         	mov 00h,A
+  421 02A1 91DA         	acall addPC
+  422 02A3 91DA         	acall addPC
+  423 02A5 020097       	jmp CNT
+  424 02A8              	
+  425 02A8              	
+  426 02A8              isSUBBI:
+  427 02A8 851A83       	Mov DPH,1Ah
+  428 02AB 851B82       	Mov DPL,1Bh
+  429 02AE A3           	inc DPTR
+  430 02AF E0           	movx A, @DPTR
+  431 02B0 D2D4         	setb RS1
+  432 02B2 D2D3         	setb RS0
+  433 02B4 F8           	mov R0,A
+  434 02B5 E500         	mov A,00h
+  435 02B7 A200         	mov c,00h
+  436 02B9 98           	subb A,R0
+  437 02BA 9200         	mov 00h,c
+  438 02BC F500         	mov 00h,A
+  439 02BE 91DA         	acall addPC
+  440 02C0 91DA         	acall addPC
+  441 02C2 020097       	jmp CNT
+  442 02C5              
+  443 02C5              
+  444 02C5              isJZ:
+  445 02C5 851A83       	Mov DPH,1Ah
+  446 02C8 851B82       	Mov DPL,1Bh
+  447 02CB A3           	inc DPTR
+  448 02CC E0           	movx  A,@DPTR
+  449 02CD D2D4         	setb RS1
+  450 02CF D2D3         	setb RS0
+  451 02D1 F8           	mov R0, A
+  452 02D2 A3           	inc DPTR
+  453 02D3 E0           	movx  A,@DPTR
+  454 02D4 F9           	mov R1,A
+  455 02D5 E500         	mov A, 00h
+  456 02D7 6009         	jz isJZ_C1
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 9
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  457 02D9 91DA         	acall addPC
+  458 02DB 91DA         	acall addPC
+  459 02DD 91DA         	acall addPC
+  460 02DF 020097       	jmp CNT
+  461 02E2              isJZ_C1:
+  462 02E2 E8           	mov A,R0
+  463 02E3 2523         	add A,23h
+  464 02E5 F51A         	mov 1Ah,A
+  465 02E7 E9           	mov A,R1
+  466 02E8 3524         	addc A,24h
+  467 02EA F51B         	Mov 1Bh,A
+  468 02EC 020097       	jmp CNT
+  469 02EF              	
+  470 02EF              	
+  471 02EF              isJC:
+  472 02EF 851A83       	Mov DPH,1Ah
+  473 02F2 851B82       	Mov DPL,1Bh
+  474 02F5 A3           	inc DPTR
+  475 02F6 E0           	movx  A,@DPTR
+  476 02F7 D2D4         	setb RS1
+  477 02F9 D2D3         	setb RS0
+  478 02FB F8           	mov R0, A
+  479 02FC A3           	inc DPTR
+  480 02FD E0           	movx  A,@DPTR
+  481 02FE F9           	mov R1,A
+  482 02FF A200         	mov c,00h
+  483 0301 4009         	jc isJC_C1
+  484 0303 91DA         	acall addPC
+  485 0305 91DA         	acall addPC
+  486 0307 91DA         	acall addPC
+  487 0309 020097       	jmp CNT
+  488 030C              isJC_C1:
+  489 030C E8           	mov A,R0
+  490 030D 2523         	add A,23h
+  491 030F F51A         	mov 1Ah,A
+  492 0311 E9           	mov A,R1
+  493 0312 3524         	addc A,24h
+  494 0314 F51B         	Mov 1Bh,A
+  495 0316 020097       	jmp CNT
+  496 0319              
+  497 0319              
+  498 0319              
+  499 0319              	
+  500 0319              isLJUMP:
+  501 0319 851A83       	Mov DPH,1Ah
+  502 031C 851B82       	Mov DPL,1Bh
+  503 031F A3           	inc DPTR
+  504 0320 E0           	movx  A,@DPTR
+  505 0321 D2D4         	setb RS1
+  506 0323 D2D3         	setb RS0
+  507 0325 F8           	mov R0, A
+  508 0326 A3           	inc DPTR
+  509 0327 E0           	movx  A,@DPTR
+  510 0328 F9           	mov R1,A
+  511 0329 E8           	mov A,R0
+  512 032A 2523         	add A,23h
+  513 032C F51A         	mov 1Ah,A
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 10
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  514 032E E9           	mov A,R1
+  515 032F 3524         	addc A,24h
+  516 0331 F51B         	Mov 1Bh,A
+  517 0333              	
+  518 0333 020097       	jmp CNT
+  519 0336              
+  520 0336              
+  521 0336              
+  522 0336              isLCALL: ;;; 3 byte
+  523 0336 91A5         	acall SavePC
+  524 0338 851A83       	Mov DPH,1Ah
+  525 033B 851B82       	Mov DPL,1Bh
+  526 033E A3           	inc DPTR
+  527 033F E0           	movx  A,@DPTR
+  528 0340 D2D4         	setb RS1
+  529 0342 D2D3         	setb RS0
+  530 0344 F8           	mov R0, A
+  531 0345 A3           	inc DPTR
+  532 0346 E0           	movx  A,@DPTR
+  533 0347 F9           	mov R1,A
+  534 0348 E8           	mov A,R0
+  535 0349 2523         	add A,23h
+  536 034B F51A         	mov 1Ah,A
+  537 034D E9           	mov A,R1
+  538 034E 3524         	addc A,24h
+  539 0350 F51B         	Mov 1Bh,A
+  540 0352 020097       	jmp CNT
+  541 0355              	
+  542 0355              
+  543 0355              isINT:
+  544 0355 91A5         	acall SavePC
+  545 0357 D210         	setb 10h
+  546 0359 C211         	clr 11h
+  547 035B              	
+  548 035B 7818         	mov R0,#18H
+  549 035D 7903         	mov R1,#03H
+  550 035F E8           	mov A,R0
+  551 0360 2523         	add A,23h
+  552 0362 F51A         	mov 1Ah,A
+  553 0364 E9           	mov A,R1
+  554 0365 3524         	addc A,24h
+  555 0367 F51B         	Mov 1Bh,A
+  556 0369 020097       	jmp CNT
+  557 036C              	
+  558 036C              isRET:
+  559 036C 91BF         	acall loadPC
+  560 036E 020097       	jmp CNT
+  561 0371              	
+  562 0371              isRETI:
+  563 0371 91BF         	acall loadPC
+  564 0373 C210         	clr 10h
+  565 0375 301205       	jnb 12H,isRETI_C1
+  566 0378 D2AA         	setb EX1
+  567 037A 020097       	jmp CNT
+  568 037D              isRETI_C1:
+  569 037D C2AA         	clr EX1
+  570 037F 020097       	jmp CNT
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 11
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  571 0382              	
+  572 0382              isMASKINT:
+  573 0382 C212         	clr 12h
+  574 0384 020097       	jmp CNT
+  575 0387              isUNMASKINT:
+  576 0387 D212         	setb 12h
+  577 0389 020097       	jmp CNT
+  578 038C              isMOVRM: ;;; 4 byte
+  579 038C 851A83       	Mov DPH,1Ah
+  580 038F 851B82       	Mov DPL,1Bh
+  581 0392 A3           	inc DPTR
+  582 0393 E0           	movx  A,@DPTR
+  583 0394 D2D4         	setb RS1
+  584 0396 D2D3         	setb RS0
+  585 0398 F8           	mov R0, A
+  586 0399 A3           	inc DPTR
+  587 039A E0           	movx  A,@DPTR
+  588 039B F9           	mov R1,A
+  589 039C A3           	inc DPTR
+  590 039D E0           	movx  A,@DPTR
+  591 039E FE           	mov R6,A
+  592 039F 8983         	mov DPH,R1
+  593 03A1 8E82         	mov DPL,R6
+  594 03A3 E0           	movx A,@DPTR
+  595 03A4 F6           	mov @R0,A
+  596 03A5 91DA         	acall addPC
+  597 03A7 91DA         	acall addPC
+  598 03A9 91DA         	acall addPC
+  599 03AB 91DA         	acall addPC
+  600 03AD 020097       	jmp CNT
+  601 03B0              
+  602 03B0              
+  603 03B0              
+  604 03B0              isMOVMR:
+  605 03B0 851A83       	Mov DPH,1Ah
+  606 03B3 851B82       	Mov DPL,1Bh
+  607 03B6 A3           	inc DPTR
+  608 03B7 E0           	movx  A,@DPTR
+  609 03B8 D2D4         	setb RS1
+  610 03BA D2D3         	setb RS0
+  611 03BC F9           	mov R1, A
+  612 03BD A3           	inc DPTR
+  613 03BE E0           	movx  A,@DPTR
+  614 03BF FE           	mov R6,A
+  615 03C0 A3           	inc DPTR
+  616 03C1 E0           	movx  A,@DPTR
+  617 03C2 F8           	mov R0,A
+  618 03C3 8983         	mov DPH,R1
+  619 03C5 8E82         	mov DPL,R6
+  620 03C7 E6           	mov A,@R0
+  621 03C8 F0           	movx @DPTR,A
+  622 03C9 91DA         	acall addPC
+  623 03CB 91DA         	acall addPC
+  624 03CD 91DA         	acall addPC
+  625 03CF 91DA         	acall addPC
+  626 03D1 020097       	jmp CNT
+  627 03D4              
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 12
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  628 03D4              
+  629 03D4              
+  630 03D4              
+  631 03D4              
+  632 03D4              
+  633 03D4              isINPUT:
+  634 03D4 75260A       	mov 26h,#0Ah
+  635 03D7 75270B       	mov 27h,#0Bh
+  636 03DA 75280C       	mov 28h,#0Ch
+  637 03DD 75290D       	mov 29h,#0Dh
+  638 03E0 1205B9       	call SHOW
+  639 03E3 91E7         	acall getByte
+  640 03E5 F500         	mov 00h,A
+  641 03E7 91DA         	acall addPC
+  642 03E9 020097       	jmp CNT
+  643 03EC              isOUTPUT:
+  644 03EC 850C26       	 mov 26h,12
+  645 03EF 850D27       	 mov 27h,13
+  646 03F2 850E28       	 mov 28h,14
+  647 03F5 850F29       	 mov 29h,15
+  648 03F8 B1B9         	acall SHOW
+  649 03FA B1A9         	acall LDe
+  650 03FC 91DA         	acall addPC
+  651 03FE 020097       	jmp CNT
+  652 0401              	;jmp EE
+  653 0401              isMOVRR:		;; This is going to be a three byte memory
+  654 0401 851A83       	Mov DPH,1Ah
+  655 0404 851B82       	Mov DPL,1Bh
+  656 0407 A3           	inc DPTR
+  657 0408 E0           	movx  A,@DPTR
+  658 0409 D2D4         	setb RS1
+  659 040B D2D3         	setb RS0
+  660 040D F8           	mov R0, A
+  661 040E A3           	inc DPTR
+  662 040F E0           	movx  A,@DPTR
+  663 0410 F9           	mov R1,A
+  664 0411 E7           	mov A,@R1
+  665 0412 F6           	mov @R0,A
+  666 0413 91DA         	acall addPC
+  667 0415 91DA         	acall addPC
+  668 0417 91DA         	acall addPC
+  669 0419 020097       	jmp CNT
+  670 041C              
+  671 041C              isNOP:
+  672 041C 91DA         	acall addPC
+  673 041E 020097       	jmp CNT
+  674 0421              
+  675 0421              isMovI:
+  676 0421 851A83       	Mov DPH,1Ah
+  677 0424 851B82       	Mov DPL,1Bh
+  678 0427 A3           	inc DPTR
+  679 0428 E0           	movx  A,@DPTR
+  680 0429 D2D4         	setb RS1
+  681 042B D2D3         	setb RS0
+  682 042D F8           	mov R0, A
+  683 042E A3           	inc DPTR
+  684 042F E0           	movx  A,@DPTR
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 13
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  685 0430 F9           	mov R1,A
+  686 0431 E9           	mov A,R1
+  687 0432 F6           	mov @R0,A
+  688 0433 91DA         	acall addPC
+  689 0435 91DA         	acall addPC
+  690 0437 91DA         	acall addPC
+  691 0439 020097       	jmp CNT
+  692 043C              isSBIT:
+  693 043C 851A83       	Mov DPH,1Ah
+  694 043F 851B82       	Mov DPL,1Bh
+  695 0442 A3           	inc DPTR
+  696 0443 E0           	movx  A,@DPTR
+  697 0444 D2D4         	setb RS1
+  698 0446 D2D3         	setb RS0
+  699 0448 F8           	mov R0, A
+  700 0449 A3           	inc DPTR
+  701 044A E0           	movx  A,@DPTR
+  702 044B F9           	mov R1,A
+  703 044C E520         	mov A,20h
+  704 044E 48           	orl A,R0
+  705 044F F520         	mov 20h,A
+  706 0451 E521         	mov A,21h
+  707 0453 49           	orl A,R1
+  708 0454 F521         	mov 21h,A
+  709 0456 91DA         	acall addPC
+  710 0458 91DA         	acall addPC
+  711 045A 91DA         	acall addPC
+  712 045C 020097       	jmp CNT
+  713 045F              	
+  714 045F              isCLR:
+  715 045F 851A83       	Mov DPH,1Ah
+  716 0462 851B82       	Mov DPL,1Bh
+  717 0465 A3           	inc DPTR
+  718 0466 E0           	movx  A,@DPTR
+  719 0467 D2D4         	setb RS1
+  720 0469 D2D3         	setb RS0
+  721 046B F8           	mov R0, A
+  722 046C A3           	inc DPTR
+  723 046D E0           	movx  A,@DPTR
+  724 046E F9           	mov R1,A
+  725 046F E520         	mov A,20h
+  726 0471 58           	anl A,R0
+  727 0472 F520         	mov 20h,A
+  728 0474 E521         	mov A,21h
+  729 0476 59           	anl A,R1
+  730 0477 F521         	mov 21h,A
+  731 0479 91DA         	acall addPC
+  732 047B 91DA         	acall addPC
+  733 047D 91DA         	acall addPC
+  734 047F 020097       	jmp CNT
+  735 0482              	
+  736 0482              	
+  737 0482              isCPR:
+  738 0482 851A83       	Mov DPH,1Ah
+  739 0485 851B82       	Mov DPL,1Bh
+  740 0488 A3           	inc DPTR
+  741 0489 E0           	movx  A,@DPTR
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 14
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  742 048A D2D4         	setb RS1
+  743 048C D2D3         	setb RS0
+  744 048E F8           	mov R0, A
+  745 048F A3           	inc DPTR
+  746 0490 E0           	movx  A,@DPTR
+  747 0491 F9           	mov R1,A
+  748 0492 E520         	mov A,20h
+  749 0494 68           	xrl A,R0
+  750 0495 F520         	mov 20h,A
+  751 0497 E521         	mov A,21h
+  752 0499 69           	xrl A,R1
+  753 049A F521         	mov 21h,A
+  754 049C 91DA         	acall addPC
+  755 049E 91DA         	acall addPC
+  756 04A0 91DA         	acall addPC
+  757 04A2 020097       	jmp CNT
+  758 04A5              	
+  759 04A5              
+  760 04A5              
+  761 04A5              
+  762 04A5              
+  763 04A5              
+  764 04A5              
+  765 04A5              savePC:
+  766 04A5 E51A         	mov A,1Ah
+  767 04A7 851C83       	mov DPH,1Ch
+  768 04AA 851D82       	mov DPL,1Dh
+  769 04AD F0           	movx @DPTR,A
+  770 04AE A3           	inc DPTR
+  771 04AF E51B         	mov A,1Bh
+  772 04B1 F0           	movx @DPTR,A
+  773 04B2 E51D         	mov A,1Dh
+  774 04B4 2402         	add A,#2
+  775 04B6 F51D         	mov 1Dh,A
+  776 04B8 E51C         	mov A,1Ch
+  777 04BA 3400         	addc A,#0
+  778 04BC F51C         	mov 1Ch,A
+  779 04BE 22           	RET
+  780 04BF              	
+  781 04BF              	
+  782 04BF              	
+  783 04BF              loadPC:
+  784 04BF C3           	clr c
+  785 04C0 E51D         	mov A,1Dh
+  786 04C2 9402         	subb A,#2
+  787 04C4 F51D         	mov 1Dh,A
+  788 04C6 E51C         	mov A,1Ch
+  789 04C8 9400         	subb A,#0
+  790 04CA F51C         	mov 1Ch,A
+  791 04CC 851C83       	mov DPH,1Ch
+  792 04CF 851D82       	mov DPL,1Dh
+  793 04D2 E0           	movx A,@DPTR
+  794 04D3 F51A         	mov 1Ah,A
+  795 04D5 A3           	inc DPTR
+  796 04D6 E0           	movx A,@DPTR
+  797 04D7 F51B         	mov 1Bh,A
+  798 04D9 22           	ret
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 15
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  799 04DA              	
+  800 04DA              	
+  801 04DA              addPC:
+  802 04DA E51B         	mov A,1Bh
+  803 04DC 2401         	add A,#1
+  804 04DE F51B         	mov 1Bh,A
+  805 04E0 E51A         	mov A,1Ah
+  806 04E2 3400         	addc A,#0
+  807 04E4 F51A         	mov 1Ah,A
+  808 04E6 22           	ret 
+  809 04E7              	
+  810 04E7              	
+  811 04E7              getByte:
+  812 04E7 00           	 NOP
+  813 04E8              again:
+  814 04E8 B118         	acall getFour
+  815 04EA F514         	mov 14h,A
+  816 04EC B118         	acall getFour
+  817 04EE F5F0         	mov B,A
+  818 04F0 E514         	mov A,14h
+  819 04F2 C3           	clr c
+  820 04F3 33           	rlc A
+  821 04F4 C3           	clr c
+  822 04F5 33           	rlc A
+  823 04F6 C3           	clr c
+  824 04F7 33           	rlc A
+  825 04F8 C3           	clr c
+  826 04F9 33           	rlc A
+  827 04FA 25F0         	add A,B
+  828 04FC F514         	mov 14h,A
+  829 04FE 7526FF       	mov 26h,#0FFh
+  830 0501 7527FF       	mov 27h,#0FFh
+  831 0504 7528FF       	mov 28h,#0FFh
+  832 0507 851429       	mov 29h,14h
+  833 050A B1B9         	acall SHOW
+  834 050C B1A9         	acall LDe
+  835 050E B1D2         	acall rSHOW
+  836 0510 B118         	acall getFour
+  837 0512 B40FD3       	cjne A,#0Fh,again
+  838 0515 E514         	mov A,14h
+  839 0517 22           	ret
+  840 0518              
+  841 0518              
+  842 0518              
+  843 0518              
+  844 0518              getFour:
+  845 0518 90E003       	MOV DPTR,#0E003H ;PROGRAMMING CWR [CONTROL WORD REGISTER]. PORT_C[4..7]: OUTPUT, PORT_C[0..3]: INPUT. PORT_A: OUTPUT, PORT_B: OUTPUT.
+  846 051B 7481         	MOV A,#10000001B
+  847 051D F0           	MOVX @DPTR,A
+  848 051E 90E002       	MOV DPTR,#0E002H
+  849 0521 740F         	MOV A,#0fh
+  850 0523 F0           	Movx @DPTR,A
+  851 0524              
+  852 0524 D214         	setb 14h
+  853 0526 D2AF         	setb EA
+  854 0528 2014FD       	jb 14h,$
+  855 052B C2AF         	clr EA
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 16
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  856 052D              	
+  857 052D              
+  858 052D B19E         	acall SmDe
+  859 052F E0           	movx A,@DPTR			;4lower are good  row
+  860 0530 F4           	CPL A
+  861 0531 F5F0         	mov B,A
+  862 0533 90E003       	MOV DPTR,#0E003H ;PROGRAMMING CWR [CONTROL WORD REGISTER]. PORT_C[4..7]: OUTPUT, PORT_C[0..3]: INPUT. PORT_A: OUTPUT, PORT_B: OUTPUT.
+  863 0536 7488         	MOV A,#10001000B
+  864 0538 F0           	MOVX @DPTR,A
+  865 0539 90E002       	MOV DPTR,#0E002H
+  866 053C 7400         	MOV A,#0
+  867 053E F0           	Movx @DPTR,A			;4upper bits are good  colomn
+  868 053F B19E         	acall SmDe
+  869 0541 E0           	Movx A,@DPTR
+  870 0542 F4           	CPL A
+  871 0543 F515         	mov 15h,A
+  872 0545 E5F0         	mov A,B
+  873 0547 B4F106       	cjne A,#0F1h,CC1
+  874 054A 75F000       	mov B,#0
+  875 054D 02056B       	jmp K1
+  876 0550              CC1:
+  877 0550 B4F206       	cjne A,#0F2h,CC2
+  878 0553 75F001       	mov B,#1
+  879 0556 02056B       	jmp K1
+  880 0559              CC2:
+  881 0559 B4F406       	cjne A,#0F4h,CC3
+  882 055C 75F002       	mov B,#2
+  883 055F 02056B       	jmp K1
+  884 0562              CC3:
+  885 0562 B4F806       	cjne A,#0F8h,K1
+  886 0565 75F003       	mov B,#3
+  887 0568 02056B       	jmp K1
+  888 056B              K1:
+  889 056B              
+  890 056B E515         	mov A,15h
+  891 056D B41F05       	cjne A,#1Fh,CD1
+  892 0570 7400         	mov A,#0
+  893 0572 02058D       	jmp K2
+  894 0575              CD1:
+  895 0575 B42F05       	cjne A,#2Fh,CD2
+  896 0578 7401         	mov A,#1
+  897 057A 02058D       	jmp K2
+  898 057D              CD2:
+  899 057D B44F05       	cjne A,#4Fh,CD3
+  900 0580 7402         	mov A,#2
+  901 0582 02058D       	jmp K2
+  902 0585              CD3:
+  903 0585 B48F05       	cjne A,#8Fh,K2
+  904 0588 7403         	mov A,#3
+  905 058A 02058D       	jmp K2
+  906 058D              
+  907 058D              K2:
+  908 058D F515         	mov 15h,A
+  909 058F E5F0         	mov A,B
+  910 0591 C3           	clr c
+  911 0592 33           	rlc A
+  912 0593 C3           	clr c
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 17
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  913 0594 33           	rlc A
+  914 0595 2515         	add A,15h
+  915 0597 F515         	mov 15h,A
+  916 0599              	;acall LDe
+  917 0599 B19E         	acall SmDe
+  918 059B E515         	mov A,15h
+  919 059D 22           	ret
+  920 059E              	
+  921 059E              	
+  922 059E              	
+  923 059E              SmDe:
+  924 059E 74FF            mov A,#0FFh
+  925 05A0              Sm_1:
+  926 05A0 00              NOP
+  927 05A1 00              NOP
+  928 05A2 00              NOP
+  929 05A3 00              NOP
+  930 05A4 00              NOP
+  931 05A5 14               dec A
+  932 05A6 70F8             jnz Sm_1
+  933 05A8 22               ret
+  934 05A9              	
+  935 05A9              	
+  936 05A9              	
+  937 05A9              LDe:
+  938 05A9 75F0BF          mov B,#0Bfh
+  939 05AC               LD_1:
+  940 05AC B19E            acall SmDe
+  941 05AE B19E            acall SmDe
+  942 05B0 B19E            acall SmDe
+  943 05B2 15F0            dec B
+  944 05B4 E5F0            mov A,B
+  945 05B6 70F4            jnz LD_1
+  946 05B8 22              ret
+  947 05B9              	
+  948 05B9              SHOW:
+  949 05B9 90C000       	MOV DPTR,#0C000H ;PORT A IS ACCESSED. OF THE UPPER PPI.
+  950 05BC E526         	MOV A,26H ;
+  951 05BE F0           	MOVX @DPTR,A ;
+  952 05BF 90E000       	MOV DPTR,#0E000H ;PORT A IS ACCESSED. OF THE PPI WHICH IS CONNECTED TO KEYPAD.
+  953 05C2 E529         	MOV A,29H
+  954 05C4 F0           	MOVX @DPTR,A ;
+  955 05C5 90C002       	MOV DPTR,#0C002H ;PORT C IS ACCESSED. OF THE UPPER PPI.
+  956 05C8 E528         	MOV A,28H
+  957 05CA F0           	MOVX @DPTR,A ;
+  958 05CB 90C001       	MOV DPTR,#0C001H ;PORT B IS ACCESSED. OF THE UPPER PPI.
+  959 05CE E527         	MOV A,27H
+  960 05D0 F0           	MOVX @DPTR,A ;
+  961 05D1 22           	RET
+  962 05D2                     
+  963 05D2                     
+  964 05D2               rSHow:
+  965 05D2 752600          mov 26h,#0
+  966 05D5 752700          mov 27h,#0
+  967 05D8 752800          mov 28h,#0
+  968 05DB 752900          mov 29h,#0
+  969 05DE B1B9             acall SHOW
+8051 Assembler           Version 1.00   02/07/121 11:31:17    Page 18
+C:\Users\Alireza Rafiee\Documents\Semsters\5th semster\Computer Architecture\Project\Projct\MicroProfessor-Project-97101723-96102404-96102375\Simulate\keyboard_reading.a51
+
+
+
+  970 05E0 22               ret
+  971 05E1              	
+  972 05E1              TABLE:      
+  973 05E1 3A 01        DW	isAND
+  974 05E3 53 01        DW	isANDI
+  975 05E5 6C 01        DW	isOR
+  976 05E7 85 01        DW	isORI
+  977 05E9 9E 01        DW	isNOT
+  978 05EB B5 01        DW	isRL
+  979 05ED CC 01        DW	isRLC
+  980 05EF E7 01        DW	isRR
+  981 05F1 FE 01        DW	isRRC
+  982 05F3 19 02        DW	isADD
+  983 05F5 35 02        DW	isADDI	
+  984 05F7 51 02        DW	isADDC
+  985 05F9 6E 02        DW	isADDCI
+  986 05FB 8B 02        DW	isSUBB
+  987 05FD A8 02        DW	isSUBBI
+  988 05FF C5 02        DW	isJZ
+  989 0601 EF 02        DW	isJC
+  990 0603 19 03        DW	isLJUMP
+  991 0605 36 03        DW	isLCALL
+  992 0607 55 03        DW	isINT
+  993 0609 6C 03        DW	isRET
+  994 060B 71 03        DW	isRETI
+  995 060D 82 03        DW	isMASKINT
+  996 060F 87 03        DW	isUNMASKINT
+  997 0611 8C 03        DW	isMOVRM
+  998 0613 B0 03        DW	isMOVMR
+  999 0615 D4 03        DW	isINPUT
+ 1000 0617 EC 03        DW	isOUTPUT
+ 1001 0619 01 04        DW	isMOVRR
+ 1002 061B 1C 04        DW	isNOP
+ 1003 061D 21 04        DW	isMovI
+ 1004 061F 3C 04        DW	isSBIT
+ 1005 0621 5F 04        DW	isCLR
+ 1006 0623 82 04        DW	isCPR
+ 1007 0625              
+ 1008 0625              
+ 1009 0625              
+ 1010 0625              EE:
+ 1011 0625 020625       	jmp $
+ 1012 0628              
+ 1013 0628              
+ 1014 0628              
+ 1015 0628                 
+ 1016 0628              END
+
+Defined Symbols:
+
+Defined Labels:
+  addPC                                     0004DA  1242
+  again                                     0004E8  1256
+  CC1                                       000550  1360
+  CC2                                       000559  1369
+  CC3                                       000562  1378
+  CD1                                       000575  1397
+  CD2                                       00057D  1405
+  CD3                                       000585  1413
+  CNT                                       000097  151
+  CNT_C1                                    0000BF  191
+  CNT_C2                                    0000BA  186
+  CNT_C3                                    00009D  157
+  CNT_C4                                    0000F0  240
+  EE                                        000625  1573
+  getByte                                   0004E7  1255
+  getFour                                   000518  1304
+  isADD                                     000219  537
+  isADDC                                    000251  593
+  isADDCI                                   00026E  622
+  isADDI                                    000235  565
+  isAND                                     00013A  314
+  isANDI                                    000153  339
+  isCLR                                     00045F  1119
+  isCPR                                     000482  1154
+  isINPUT                                   0003D4  980
+  isINT                                     000355  853
+  isJC                                      0002EF  751
+  isJC_C1                                   00030C  780
+  isJZ                                      0002C5  709
+  isJZ_C1                                   0002E2  738
+  isLCALL                                   000336  822
+  isLJUMP                                   000319  793
+  isMASKINT                                 000382  898
+  isMovI                                    000421  1057
+  isMOVMR                                   0003B0  944
+  isMOVRM                                   00038C  908
+  isMOVRR                                   000401  1025
+  isNOP                                     00041C  1052
+  isNOT                                     00019E  414
+  isOR                                      00016C  364
+  isORI                                     000185  389
+  isOUTPUT                                  0003EC  1004
+  isRET                                     00036C  876
+  isRETI                                    000371  881
+  isRETI_C1                                 00037D  893
+  isRL                                      0001B5  437
+  isRLC                                     0001CC  460
+  isRR                                      0001E7  487
+  isRRC                                     0001FE  510
+  isSBIT                                    00043C  1084
+  isSUBB                                    00028B  651
+  isSUBBI                                   0002A8  680
+  isUNMASKINT                               000387  903
+  K1                                        00056B  1387
+  K2                                        00058D  1421
+  LD_1                                      0005AC  1452
+  LDe                                       0005A9  1449
+  loadPC                                    0004BF  1215
+  Loop                                      000031  49
+  Main                                      000065  101
+  Main_C1                                   00007A  122
+  MyC                                       000074  116
+  rSHow                                     0005D2  1490
+  savePC                                    0004A5  1189
+  SHOW                                      0005B9  1465
+  Sm_1                                      0005A0  1440
+  SmDe                                      00059E  1438
+  ST_1                                      00003E  62
+  ST_2                                      000056  86
+  Start                                     000008  8
+  startEx                                   000056  86
+  TABLE                                     0005E1  1505
